@@ -22,6 +22,7 @@ import pandas as pd
 import streamlit as st
 
 import config
+from data import session_db
 
 # ---------------------------------------------------------------------------
 # Dataclasses
@@ -66,29 +67,30 @@ class FinancialKPIs:
 # Connection management
 # ---------------------------------------------------------------------------
 
-# Schema is run once per process. Streamlit reruns the script per interaction,
-# but modules are imported once, so this flag persists across reruns.
-_schema_initialized = False
+# Schema is run once per DB file. Streamlit reruns the script per interaction
+# but modules are imported once, so this set persists across reruns. Per-path
+# (not a single bool) because each visitor's session opens its own DB file.
+_schema_initialized_paths: set[str] = set()
 
 
-def _ensure_schema() -> None:
-    global _schema_initialized
-    if _schema_initialized:
+def _ensure_schema(path: str) -> None:
+    if path in _schema_initialized_paths:
         return
-    c = duckdb.connect(config.DUCKDB_PATH)
+    c = duckdb.connect(path)
     try:
         with open(config.SCHEMA_SQL_PATH, "r", encoding="utf-8") as f:
             c.execute(f.read())
     finally:
         c.close()
-    _schema_initialized = True
+    _schema_initialized_paths.add(path)
 
 
 @contextmanager
 def _conn():
     """Open a short-lived read-only connection. Schema is ensured first."""
-    _ensure_schema()
-    c = duckdb.connect(config.DUCKDB_PATH, read_only=True)
+    path = session_db.get_db_path()
+    _ensure_schema(path)
+    c = duckdb.connect(path, read_only=True)
     try:
         yield c
     finally:

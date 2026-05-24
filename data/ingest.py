@@ -19,6 +19,7 @@ import duckdb
 import pandas as pd
 
 import config
+from data import session_db
 
 # ---------------------------------------------------------------------------
 # Dataclasses (CONTRACTS §5.1 / SPEC §9.1)
@@ -210,7 +211,7 @@ def _all_canonical_fields() -> set[str]:
 
 
 def _get_conn() -> duckdb.DuckDBPyConnection:
-    conn = duckdb.connect(config.DUCKDB_PATH)
+    conn = duckdb.connect(session_db.get_db_path())
     with open(config.SCHEMA_SQL_PATH, "r", encoding="utf-8") as f:
         conn.execute(f.read())
     return conn

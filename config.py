@@ -21,8 +21,9 @@ STORAGE_DIR = os.path.join(PROJECT_ROOT, "storage")
 RAW_DIR = os.path.join(STORAGE_DIR, "raw")
 TEMPLATES_DIR = os.path.join(STORAGE_DIR, "templates")
 EXPORTS_DIR = os.path.join(STORAGE_DIR, "exports")
-DUCKDB_PATH = os.path.join(STORAGE_DIR, "sop.duckdb")
 SCHEMA_SQL_PATH = os.path.join(PROJECT_ROOT, "data", "schema.sql")
+# DuckDB file path is no longer a single constant — see data/session_db.py
+# (each Streamlit session opens its own DB so visitors don't collide).
 
 _TKO_TEMPLATE = os.path.join(TEMPLATES_DIR, "tko_template.pptx")
 TKO_TEMPLATE_PATH = _TKO_TEMPLATE if os.path.exists(_TKO_TEMPLATE) else None

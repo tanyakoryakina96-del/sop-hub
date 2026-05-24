@@ -8,6 +8,7 @@ logic lives here.
 import streamlit as st
 
 import config  # noqa: F401 — side effect: registers the Plotly "tko" template
+from data import session_db
 
 st.set_page_config(
     page_title="S&OP Hub",
@@ -15,6 +16,11 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
+
+# Per-session DuckDB: each visitor gets their own file, pre-seeded with
+# anonymized sample data so dashboards render on first paint. See CONTRACTS §5.6.
+session_db.cleanup_stale_sessions()
+session_db.seed_if_empty()
 
 # ---------------------------------------------------------------------------
 # Header — title + demand-version chip

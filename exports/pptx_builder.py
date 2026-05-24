@@ -39,7 +39,7 @@ from pptx.enum.text import PP_ALIGN
 from pptx.util import Emu, Inches, Pt
 
 import config
-from data import query
+from data import query, session_db
 from data.query import Filters
 from exports import chart_fallback
 
@@ -193,7 +193,7 @@ def build(
 def _resolve_cycle_month(filters: Filters) -> str:
     dv = query.current_data_version("demand")
     if dv is not None:
-        c = duckdb.connect(config.DUCKDB_PATH, read_only=True)
+        c = duckdb.connect(session_db.get_db_path(), read_only=True)
         try:
             row = c.execute(
                 "SELECT MAX(period_date) FROM fact_demand WHERE data_version = ?",

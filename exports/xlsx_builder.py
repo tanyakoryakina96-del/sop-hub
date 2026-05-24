@@ -20,7 +20,7 @@ from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.worksheet.worksheet import Worksheet
 
 import config
-from data import query
+from data import query, session_db
 from data.query import Filters
 
 # ---------------------------------------------------------------------------
@@ -139,7 +139,7 @@ def _resolve_cycle_month(filters: Filters) -> str:
     dv = query.current_data_version("demand")
     if dv is not None:
         # Direct DuckDB read is permitted inside exports/ (rule §3.6).
-        c = duckdb.connect(config.DUCKDB_PATH, read_only=True)
+        c = duckdb.connect(session_db.get_db_path(), read_only=True)
         try:
             row = c.execute(
                 "SELECT MAX(period_date) FROM fact_demand WHERE data_version = ?",

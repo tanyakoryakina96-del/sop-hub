@@ -35,7 +35,9 @@ exports/
   chart_fallback.py     matplotlib (Agg). In-process PNG renderer used when
                         kaleido times out. Owns: render(kind, df, *, title, width_px, height_px).
 
-storage/                Runtime — gitignored. sop.duckdb, raw/, templates/, exports/.
+storage/                Runtime — gitignored. sessions/ (per-Streamlit-session DuckDB files),
+                        sop.duckdb (fallback for non-Streamlit invocations),
+                        raw/, templates/, exports/.
 assets/tko/             Unzipped TKO design system — gitignored.
 ```
 
@@ -341,9 +343,10 @@ Filename format: `S&OP_Report_YYYY-MM.xlsx` (matches SPEC §6.2). `YYYY-MM` reso
 Pages and exports read these directly. Treat as a contract; renaming a key breaks callers.
 
 ```python
-DUCKDB_PATH         : str        # storage/sop.duckdb
+STORAGE_DIR         : str        # storage/
 RAW_DIR             : str        # storage/raw
 TEMPLATES_DIR       : str        # storage/templates
+SCHEMA_SQL_PATH     : str        # data/schema.sql
 TKO_TEMPLATE_PATH   : str | None # storage/templates/tko_template.pptx if present
 TKO_LOGO_PATH       : str        # assets/tko/assets/tko-wordmark.png — PNG only.
                                  # The source SVG is manually converted once (SPEC §7.4 step 5);
@@ -360,6 +363,38 @@ DEFAULT_LOOKBACK_M  : int        # 12 — months subtracted from period_to in de
 ```
 
 **Side effect on import:** `config.py` registers the Plotly template `"tko"` via `plotly.io.templates`, and sets it as default. Importing `config` once is enough to brand every chart.
+
+### 5.6 `data/session_db.py` — per-session DuckDB management
+
+The deployed demo is multi-tenant: each Streamlit session gets its own DuckDB file under `storage/sessions/`, so two visitors uploading CSVs at the same time never overwrite each other. **All DuckDB connections must open against `session_db.get_db_path()` — never against a hard-coded path.**
+
+```python
+SESSIONS_DIR        : str        # storage/sessions/
+
+get_db_path() -> str
+    # Per-Streamlit-session DuckDB file path.
+    # Caches a UUID in st.session_state["session_db_id"] on first call.
+    # Falls back to storage/sop.duckdb when called outside a Streamlit session
+    # (unit tests, ad-hoc scripts).
+
+seed_if_empty() -> None
+    # Idempotent. On first call inside a Streamlit session with no prior
+    # uploads, ingests test_data/*.csv via ingest.load() so dashboards render
+    # immediately. Guarded by st.session_state["session_db_seeded"].
+    # Also populates st.session_state["data_versions"] for the home-page chip.
+
+cleanup_stale_sessions(max_age_hours: float = 6) -> None
+    # Best-effort prune of orphaned files in SESSIONS_DIR.
+    # Runs at most once per Python process. Streamlit Cloud's ephemeral disk
+    # makes this mostly a local-dev hygiene measure.
+```
+
+**Session-state keys owned here** (extends CONTRACTS §4):
+
+| Key | Type | Set by | Read by |
+|-----|------|--------|---------|
+| `session_db_id` | `str` (hex UUID) | `get_db_path()` on first access | `get_db_path()` |
+| `session_db_seeded` | `bool` | `seed_if_empty()` | `seed_if_empty()` |
 
 ---
 
