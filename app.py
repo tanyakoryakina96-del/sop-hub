@@ -55,6 +55,13 @@ with right:
 
 st.divider()
 
+st.info(
+    "⏳ **Give it about 15 seconds.** Dashboards re-run their queries on every "
+    "filter change or page switch — this is a hosted Streamlit demo, not a "
+    "warm in-memory app, so each interaction takes a few seconds to refresh.",
+    icon="⏳",
+)
+
 # ---------------------------------------------------------------------------
 # Landing copy — points to the sidebar pages
 # ---------------------------------------------------------------------------
