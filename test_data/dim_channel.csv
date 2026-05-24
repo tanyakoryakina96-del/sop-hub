@@ -1,0 +1,6 @@
+channel_code,channel_name,channel_type
+RET-MT,Modern Trade,retail
+RET-TT,Traditional Trade,retail
+ECOM,E-commerce,ecomm
+FOOD,Foodservice,foodservice
+EXP,Export,export

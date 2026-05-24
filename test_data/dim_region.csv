@@ -1,0 +1,5 @@
+region_code,region_name,country,cluster
+WEU,Western Europe,NL,EU-West
+NEU,Northern Europe,SE,EU-North
+SEU,Southern Europe,IT,EU-South
+CEE,Central Eastern Europe,PL,EU-CEE

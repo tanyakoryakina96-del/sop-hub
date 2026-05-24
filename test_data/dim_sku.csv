@@ -1,0 +1,11 @@
+sku_code,sku_name,brand,category,subcategory,uom,uom_to_cases
+BST-001,Bluestar Energy Original 250ml,Bluestar,Beverages,Energy Drinks,cases,1.0
+BST-002,Bluestar Energy Zero 250ml,Bluestar,Beverages,Energy Drinks,cases,1.0
+BST-003,Bluestar Energy Original 500ml,Bluestar,Beverages,Energy Drinks,cases,1.0
+CRX-001,Crux Classic Salted 150g,Crux,Snacks,Chips,cases,1.0
+CRX-002,Crux Sour Cream 150g,Crux,Snacks,Chips,cases,1.0
+CRX-003,Crux BBQ 150g,Crux,Snacks,Chips,cases,1.0
+CRX-004,Crux Multipack 6x30g,Crux,Snacks,Chips,cases,1.0
+NOR-001,Nordica Plain Yogurt 500g,Nordica,Dairy,Yogurt,cases,1.0
+NOR-002,Nordica Strawberry Yogurt 500g,Nordica,Dairy,Yogurt,cases,1.0
+NOR-003,Nordica Greek Yogurt 200g,Nordica,Dairy,Yogurt,cases,1.0

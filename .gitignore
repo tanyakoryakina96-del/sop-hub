@@ -1,0 +1,25 @@
+storage/
+assets/tko/
+# Whitelist artifacts that must survive a clean checkout:
+#  - build_wordmark.py rebuilds the wordmark PNG from PIL primitives.
+#  - tko-wordmark.png is the committed cover-slide logo (SPEC §7.4 step 5).
+!assets/tko/build_wordmark.py
+!assets/tko/assets/
+assets/tko/assets/*
+!assets/tko/assets/tko-wordmark.png
+
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+.venv/
+venv/
+env/
+
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+.claude/
