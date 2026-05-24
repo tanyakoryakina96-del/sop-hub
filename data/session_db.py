@@ -113,6 +113,13 @@ def seed_if_empty() -> None:
         for d in ("demand", "supply", "financial", "sku_master")
     }
 
+    # @st.cache_data is process-wide, so any query that ran against this DB
+    # *before* seeding completed (e.g., a Streamlit Cloud warm-up rerun) has
+    # locked in an empty result. Clear so freshly-seeded data wins. NOTE: this
+    # alone does NOT make caches session-isolated — that needs the wrapper in
+    # query._per_session_cache. Filed as a follow-up.
+    st.cache_data.clear()
+
 
 _cleanup_done = False
 
